@@ -1,58 +1,77 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, KeyboardAvoidingView, Platform, ImageBackground } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import React, {useState} from 'react';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+} from 'react-native';
+import {getUser} from '../componants/storage';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+
   const handleLogin = () => {
-    // Handle login logic here
-    alert('Logging in...');
+    const storedUser = getUser('user');
+    console.log('getUser', storedUser);
+    if (!storedUser) {
+      Alert.alert('Error', 'User Not Found,Please Register First');
+    }
+    if (storedUser.email === email && storedUser.password === password) {
+      navigation.navigate('Home');
+    } else {
+      Alert.alert('Error', 'User Not Found,Please Register First');
+    }
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ImageBackground
-        source={{ uri: 'https://images.unsplash.com/photo-1515186732730-d2642638d679' }}
-        style={styles.background}
-      >
-        <View style={styles.overlay}>
-          <View style={styles.loginContainer}>
-            <Text style={styles.title}>Welcome Back!</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <View style={styles.overlay}>
+        <View style={styles.loginContainer}>
+          <Text style={styles.title}>Welcome Back!</Text>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Username"
-              value={username}
-              onChangeText={(text) => setUsername(text)}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              secureTextEntry
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-            />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={text => setEmail(text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            secureTextEntry
+            value={password}
+            onChangeText={text => setPassword(text)}
+          />
 
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>Login</Text>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity>
+            <Text style={styles.forgotPassword}>Forgot Password?</Text>
+          </TouchableOpacity>
+
+          <View style={styles.signUpContainer}>
+            <Text style={styles.signUpText}>Don't have an account? </Text>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('Register');
+              }}>
+              <Text style={styles.signUpLink}>Sign up</Text>
             </TouchableOpacity>
-
-            <TouchableOpacity>
-              <Text style={styles.forgotPassword}>Forgot Password?</Text>
-            </TouchableOpacity>
-
-            <View style={styles.signUpContainer}>
-              <Text style={styles.signUpText}>Don't have an account? </Text>
-              <TouchableOpacity onPress={()=>{navigation.navigate('Register')}}>
-                <Text style={styles.signUpLink}>Sign up</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
-      </ImageBackground>
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -81,7 +100,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
